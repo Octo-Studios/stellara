@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "it.hurts.shatterbyte.stellara.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "stellara.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "client.LevelRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

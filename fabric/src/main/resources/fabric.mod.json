@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "stellara",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "license": "${license}",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "it.hurts.shatterbyte.stellara.fabric.StellaraFabric"
+    ],
+    "client": [
+      "it.hurts.shatterbyte.stellara.fabric.StellaraFabricClient"
+    ]
+  },
+  "mixins": [
+    "stellara.mixins.json",
+    "stellara.fabric.mixins.json"
+  ],
+  "accessWidener": "stellara.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": ">=1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
