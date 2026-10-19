@@ -1,6 +1,7 @@
 package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -47,12 +48,10 @@ public class StarFieldSkyContent implements SkyboxContent {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 
         var matrix = context.poseStack().last().pose();
-        var tesselator = Tesselator.getInstance();
-        var buffer = tesselator.getBuilder();
 
         for (var textureIndex = 0; textureIndex < textures.size(); textureIndex++) {
             RenderSystem.setShaderTexture(0, textures.get(textureIndex));
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
             for (var star : stars) {
                 if (star.textureIndex() != textureIndex)
@@ -63,7 +62,8 @@ public class StarFieldSkyContent implements SkyboxContent {
                 SkyGeometry.addTexturedBillboard(buffer, matrix, star.point(), star.size() * pulse, star.angle() + context.renderTime() * star.spinSpeed(), color, alpha * pulse);
             }
 
-            tesselator.end();
+            var mesh = buffer.build();
+            if (mesh != null) BufferUploader.drawWithShader(mesh);
         }
     }
 

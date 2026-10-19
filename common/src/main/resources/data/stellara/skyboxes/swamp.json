@@ -5,9 +5,8 @@
     "from": 13000,
     "to": 23000
   },
-  "biomes": [
-    "minecraft:swamp",
-    "minecraft:mangrove_swamp"
+  "biome_tags": [
+    "c:is_swamp"
   ],
   "layers": [
     {

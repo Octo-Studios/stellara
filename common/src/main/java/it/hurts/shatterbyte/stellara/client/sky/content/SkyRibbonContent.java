@@ -2,6 +2,7 @@ package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -77,14 +78,14 @@ public class SkyRibbonContent implements SkyboxContent {
         RenderSystem.disableCull();
 
         var matrix = context.poseStack().last().pose();
-        var buffer = Tesselator.getInstance().getBuilder();
         var time = context.renderTime() * speed;
-
-        buffer.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
+        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 
         renderRibbon(buffer, matrix, ribbon, time, alpha * opacity);
 
-        Tesselator.getInstance().end();
+        var mesh = buffer.build();
+        if (mesh != null)
+            BufferUploader.drawWithShader(mesh);
         RenderSystem.enableCull();
     }
 
@@ -224,9 +225,9 @@ public class SkyRibbonContent implements SkyboxContent {
     }
 
     private static void addTriangle(BufferBuilder buffer, Matrix4f matrix, SkyPoint first, SkyColor firstColor, float firstAlpha, SkyPoint second, SkyColor secondColor, float secondAlpha, SkyPoint third, SkyColor thirdColor, float thirdAlpha) {
-        buffer.vertex(matrix, first.x(), first.y(), first.z()).color(firstColor.red(), firstColor.green(), firstColor.blue(), firstAlpha).endVertex();
-        buffer.vertex(matrix, second.x(), second.y(), second.z()).color(secondColor.red(), secondColor.green(), secondColor.blue(), secondAlpha).endVertex();
-        buffer.vertex(matrix, third.x(), third.y(), third.z()).color(thirdColor.red(), thirdColor.green(), thirdColor.blue(), thirdAlpha).endVertex();
+        buffer.addVertex(matrix, first.x(), first.y(), first.z()).setColor(firstColor.red(), firstColor.green(), firstColor.blue(), firstAlpha);
+        buffer.addVertex(matrix, second.x(), second.y(), second.z()).setColor(secondColor.red(), secondColor.green(), secondColor.blue(), secondAlpha);
+        buffer.addVertex(matrix, third.x(), third.y(), third.z()).setColor(thirdColor.red(), thirdColor.green(), thirdColor.blue(), thirdAlpha);
     }
 
     private static float clampPitch(float pitch) {

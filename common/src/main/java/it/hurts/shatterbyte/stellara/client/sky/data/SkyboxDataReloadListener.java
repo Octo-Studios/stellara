@@ -26,7 +26,7 @@ import java.util.Map;
 import static it.hurts.shatterbyte.stellara.client.sky.data.SkyboxJson.*;
 
 public class SkyboxDataReloadListener extends SimpleJsonResourceReloadListener {
-    public static final ResourceLocation ID = new ResourceLocation(Stellara.MODID, "skyboxes");
+    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(Stellara.MODID, "skyboxes");
     private static final Gson GSON = new Gson();
 
     public SkyboxDataReloadListener() {
@@ -65,7 +65,7 @@ public class SkyboxDataReloadListener extends SimpleJsonResourceReloadListener {
             inherit(json, layer, "fade_speed");
             inherit(json, layer, "weight");
 
-            entries.add(parse(new ResourceLocation(id.getNamespace(), id.getPath() + "/layer_" + index), layer));
+            entries.add(parse(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "/layer_" + index), layer));
         }
 
         return entries;

@@ -5,7 +5,8 @@
     "from": 13000,
     "to": 23000
   },
-  "biomes": ["minecraft:snowy_plains", "minecraft:ice_spikes", "minecraft:snowy_taiga", "minecraft:frozen_river", "minecraft:snowy_beach", "minecraft:frozen_ocean", "minecraft:deep_frozen_ocean", "minecraft:deep_cold_ocean", "minecraft:grove", "minecraft:snowy_slopes", "minecraft:frozen_peaks", "minecraft:jagged_peaks"],
+  "biome_tags": ["c:is_snowy"],
+  "biomes": ["minecraft:frozen_river"],
   "layers": [
     {
       "type": "stellara:sky_tint",

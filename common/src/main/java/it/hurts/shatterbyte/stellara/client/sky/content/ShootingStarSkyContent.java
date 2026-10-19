@@ -2,6 +2,7 @@ package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -65,16 +66,16 @@ public class ShootingStarSkyContent implements SkyboxContent {
         context.poseStack().mulPose(com.mojang.math.Axis.XP.rotationDegrees(-context.skyAngle()));
 
         var matrix = context.poseStack().last().pose();
-        var tesselator = Tesselator.getInstance();
-        var buffer = tesselator.getBuilder();
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         for (var visibleShootingStar : visibleShootingStars)
             addTrail(buffer, matrix, visibleShootingStar, alpha);
 
-        tesselator.end();
+        var mesh = buffer.build();
+        if (mesh != null)
+            BufferUploader.drawWithShader(mesh);
 
         context.poseStack().popPose();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

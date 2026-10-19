@@ -49,12 +49,12 @@ public final class SkyGeometry {
             var dx = ae * sinYaw - rotatedY * cosYaw;
             var dz = rotatedY * sinYaw + ae * cosYaw;
 
-            var vertex = buffer.vertex(matrix, center.x() + dx, center.y() + dy, center.z() + dz);
+            var vertex = buffer.addVertex(matrix, center.x() + dx, center.y() + dy, center.z() + dz);
 
             if (textured)
-                vertex.uv((index >> 1) & 1, ((index + 1) >> 1) & 1);
+                vertex.setUv((index >> 1) & 1, ((index + 1) >> 1) & 1);
 
-            vertex.color(color.red(), color.green(), color.blue(), alpha).endVertex();
+            vertex.setColor(color.red(), color.green(), color.blue(), alpha);
         }
     }
 
@@ -77,9 +77,9 @@ public final class SkyGeometry {
         sideY = sideY / sideLength * width;
         sideZ = sideZ / sideLength * width;
 
-        buffer.vertex(matrix, from.x() + sideX, from.y() + sideY, from.z() + sideZ).color(color.red(), color.green(), color.blue(), alpha).endVertex();
-        buffer.vertex(matrix, to.x() + sideX, to.y() + sideY, to.z() + sideZ).color(color.red(), color.green(), color.blue(), alpha).endVertex();
-        buffer.vertex(matrix, to.x() - sideX, to.y() - sideY, to.z() - sideZ).color(color.red(), color.green(), color.blue(), alpha).endVertex();
-        buffer.vertex(matrix, from.x() - sideX, from.y() - sideY, from.z() - sideZ).color(color.red(), color.green(), color.blue(), alpha).endVertex();
+        buffer.addVertex(matrix, from.x() + sideX, from.y() + sideY, from.z() + sideZ).setColor(color.red(), color.green(), color.blue(), alpha);
+        buffer.addVertex(matrix, to.x() + sideX, to.y() + sideY, to.z() + sideZ).setColor(color.red(), color.green(), color.blue(), alpha);
+        buffer.addVertex(matrix, to.x() - sideX, to.y() - sideY, to.z() - sideZ).setColor(color.red(), color.green(), color.blue(), alpha);
+        buffer.addVertex(matrix, from.x() - sideX, from.y() - sideY, from.z() - sideZ).setColor(color.red(), color.green(), color.blue(), alpha);
     }
 }

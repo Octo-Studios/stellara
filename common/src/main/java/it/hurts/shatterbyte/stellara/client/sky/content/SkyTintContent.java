@@ -1,6 +1,7 @@
 package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -40,11 +41,9 @@ public class SkyTintContent implements SkyboxContent {
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 
         var matrix = context.poseStack().last().pose();
-        var buffer = Tesselator.getInstance().getBuilder();
         var radius = 100F;
         var tintAlpha = alpha * opacity;
-
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         addFace(buffer, matrix, -radius, -radius, -radius, -radius, -radius, radius, radius, -radius, radius, radius, -radius, -radius, tintAlpha);
         addFace(buffer, matrix, -radius, radius, radius, -radius, radius, -radius, radius, radius, -radius, radius, radius, radius, tintAlpha);
@@ -53,13 +52,15 @@ public class SkyTintContent implements SkyboxContent {
         addFace(buffer, matrix, -radius, -radius, -radius, -radius, radius, -radius, -radius, radius, radius, -radius, -radius, radius, tintAlpha);
         addFace(buffer, matrix, radius, -radius, radius, radius, radius, radius, radius, radius, -radius, radius, -radius, -radius, tintAlpha);
 
-        Tesselator.getInstance().end();
+        var mesh = buffer.build();
+        if (mesh != null)
+            BufferUploader.drawWithShader(mesh);
     }
 
     private void addFace(com.mojang.blaze3d.vertex.BufferBuilder buffer, Matrix4f matrix, float x1, float y1, float z1, float x2, float y2, float z2, float x3, float y3, float z3, float x4, float y4, float z4, float alpha) {
-        buffer.vertex(matrix, x1, y1, z1).color(color.red(), color.green(), color.blue(), alpha).endVertex();
-        buffer.vertex(matrix, x2, y2, z2).color(color.red(), color.green(), color.blue(), alpha).endVertex();
-        buffer.vertex(matrix, x3, y3, z3).color(color.red(), color.green(), color.blue(), alpha).endVertex();
-        buffer.vertex(matrix, x4, y4, z4).color(color.red(), color.green(), color.blue(), alpha).endVertex();
+        buffer.addVertex(matrix, x1, y1, z1).setColor(color.red(), color.green(), color.blue(), alpha);
+        buffer.addVertex(matrix, x2, y2, z2).setColor(color.red(), color.green(), color.blue(), alpha);
+        buffer.addVertex(matrix, x3, y3, z3).setColor(color.red(), color.green(), color.blue(), alpha);
+        buffer.addVertex(matrix, x4, y4, z4).setColor(color.red(), color.green(), color.blue(), alpha);
     }
 }

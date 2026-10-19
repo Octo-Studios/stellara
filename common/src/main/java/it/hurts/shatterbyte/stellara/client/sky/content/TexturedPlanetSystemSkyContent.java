@@ -1,6 +1,7 @@
 package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -41,25 +42,25 @@ public class TexturedPlanetSystemSkyContent implements SkyboxContent {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 
         var matrix = context.poseStack().last().pose();
-        var tesselator = Tesselator.getInstance();
-        var buffer = tesselator.getBuilder();
 
         for (var planet : planets) {
             var center = SkyGeometry.point(planet.yaw(), planet.pitch());
 
             RenderSystem.setShaderTexture(0, planet.texture());
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            SkyGeometry.addTexturedBillboard(buffer, matrix, center, planet.size(), planet.roll() + context.renderTime() * planet.rollSpeed(), planet.color(), alpha * planet.opacity());
-            tesselator.end();
+            var planetBuffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            SkyGeometry.addTexturedBillboard(planetBuffer, matrix, center, planet.size(), planet.roll() + context.renderTime() * planet.rollSpeed(), planet.color(), alpha * planet.opacity());
+            var planetMesh = planetBuffer.build();
+            if (planetMesh != null) BufferUploader.drawWithShader(planetMesh);
 
             for (var satellite : planet.satellites()) {
                 var orbitAngle = satellite.orbitOffset() + context.renderTime() * satellite.orbitSpeed();
                 var satelliteCenter = orbit(center, orbitAngle, satellite.orbitRadius());
 
                 RenderSystem.setShaderTexture(0, satellite.texture());
-                buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-                SkyGeometry.addTexturedBillboard(buffer, matrix, satelliteCenter, satellite.size(), orbitAngle + satellite.roll(), satellite.color(), alpha * satellite.opacity());
-                tesselator.end();
+                var satelliteBuffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+                SkyGeometry.addTexturedBillboard(satelliteBuffer, matrix, satelliteCenter, satellite.size(), orbitAngle + satellite.roll(), satellite.color(), alpha * satellite.opacity());
+                var satelliteMesh = satelliteBuffer.build();
+                if (satelliteMesh != null) BufferUploader.drawWithShader(satelliteMesh);
             }
         }
     }

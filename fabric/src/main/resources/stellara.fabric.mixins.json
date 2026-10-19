@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "it.hurts.shatterbyte.stellara.fabric.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "stellara.refmap.json",
   "client": [
   ],

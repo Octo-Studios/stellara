@@ -2,6 +2,7 @@ package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +59,6 @@ public class ConstellationSkyContent implements SkyboxContent {
     @Override
     public void render(SkyboxRenderContext context, float alpha) {
         var matrix = context.poseStack().last().pose();
-        var tesselator = Tesselator.getInstance();
-        var buffer = tesselator.getBuilder();
         var time = context.renderTime();
         var pulse = 0.7F + 0.3F * Mth.sin(time * twinkleSpeed * 0.5F);
 
@@ -66,28 +66,29 @@ public class ConstellationSkyContent implements SkyboxContent {
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        var lineBuffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         for (var link : links)
-            SkyGeometry.addLine(buffer, matrix, stars.get(link.from()).point(), stars.get(link.to()).point(), lineWidth, color, alpha * pulse * 0.5F);
+            SkyGeometry.addLine(lineBuffer, matrix, stars.get(link.from()).point(), stars.get(link.to()).point(), lineWidth, color, alpha * pulse * 0.5F);
 
-        tesselator.end();
+        var lineMesh = lineBuffer.build();
+        if (lineMesh != null) BufferUploader.drawWithShader(lineMesh);
 
         if (textures.isEmpty())
-            renderGlowStars(matrix, buffer, tesselator, time, alpha);
+            renderGlowStars(matrix, time, alpha);
         else
-            renderTexturedStars(matrix, buffer, tesselator, time, alpha);
+            renderTexturedStars(matrix, time, alpha);
 
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableCull();
     }
 
-    private void renderTexturedStars(org.joml.Matrix4f matrix, com.mojang.blaze3d.vertex.BufferBuilder buffer, Tesselator tesselator, float time, float alpha) {
+    private void renderTexturedStars(Matrix4f matrix, float time, float alpha) {
         RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 
         for (var textureIndex = 0; textureIndex < textures.size(); textureIndex++) {
             RenderSystem.setShaderTexture(0, textures.get(textureIndex));
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
             for (var star : stars) {
                 if (star.textureIndex() != textureIndex)
@@ -100,13 +101,14 @@ public class ConstellationSkyContent implements SkyboxContent {
                 SkyGeometry.addTexturedBillboard(buffer, matrix, star.point(), star.size() * STAR_CORE, angle, coreColor, alpha * twinkle);
             }
 
-            tesselator.end();
+            var mesh = buffer.build();
+            if (mesh != null) BufferUploader.drawWithShader(mesh);
         }
     }
 
-    private void renderGlowStars(org.joml.Matrix4f matrix, com.mojang.blaze3d.vertex.BufferBuilder buffer, Tesselator tesselator, float time, float alpha) {
+    private void renderGlowStars(Matrix4f matrix, float time, float alpha) {
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         for (var star : stars) {
             var twinkle = 0.6F + 0.4F * Mth.sin(time * twinkleSpeed + star.phase());
@@ -116,7 +118,8 @@ public class ConstellationSkyContent implements SkyboxContent {
             SkyGeometry.addBillboard(buffer, matrix, star.point(), star.size() * 0.85F, angle, coreColor, alpha * twinkle);
         }
 
-        tesselator.end();
+        var mesh = buffer.build();
+        if (mesh != null) BufferUploader.drawWithShader(mesh);
     }
 
     private static List<Star> makeStars(Shape shape, float centerYaw, float centerPitch, float scale, int textureCount, long seed) {

@@ -5,14 +5,10 @@
     "from": 13000,
     "to": 23000
   },
-  "biomes": [
-    "minecraft:desert",
-    "minecraft:badlands",
-    "minecraft:eroded_badlands",
-    "minecraft:wooded_badlands",
-    "minecraft:savanna",
-    "minecraft:savanna_plateau",
-    "minecraft:windswept_savanna"
+  "biome_tags": [
+    "minecraft:is_badlands",
+    "minecraft:is_savanna",
+    "c:is_desert"
   ],
   "layers": [
     {

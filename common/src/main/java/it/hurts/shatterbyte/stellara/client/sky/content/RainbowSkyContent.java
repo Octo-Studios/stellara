@@ -2,6 +2,7 @@ package it.hurts.shatterbyte.stellara.client.sky.content;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -71,14 +72,14 @@ public class RainbowSkyContent implements SkyboxContent {
         context.poseStack().mulPose(com.mojang.math.Axis.XP.rotationDegrees(-context.skyAngle()));
 
         var matrix = context.poseStack().last().pose();
-        var buffer = Tesselator.getInstance().getBuilder();
         var rainbowAlpha = alpha * opacity;
-
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        var buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
         renderGradient(buffer, matrix, radius, radius - thickness, rainbowAlpha);
 
-        Tesselator.getInstance().end();
+        var mesh = buffer.build();
+        if (mesh != null)
+            BufferUploader.drawWithShader(mesh);
         context.poseStack().popPose();
         RenderSystem.enableCull();
     }
@@ -172,9 +173,9 @@ public class RainbowSkyContent implements SkyboxContent {
     }
 
     private static void addBand(BufferBuilder buffer, Matrix4f matrix, SkyPoint outerLeft, SkyPoint innerLeft, SkyPoint innerRight, SkyPoint outerRight, SkyColor outerColor, SkyColor innerColor, float outerLeftAlpha, float innerLeftAlpha, float innerRightAlpha, float outerRightAlpha) {
-        buffer.vertex(matrix, outerLeft.x(), outerLeft.y(), outerLeft.z()).color(outerColor.red(), outerColor.green(), outerColor.blue(), outerLeftAlpha).endVertex();
-        buffer.vertex(matrix, innerLeft.x(), innerLeft.y(), innerLeft.z()).color(innerColor.red(), innerColor.green(), innerColor.blue(), innerLeftAlpha).endVertex();
-        buffer.vertex(matrix, innerRight.x(), innerRight.y(), innerRight.z()).color(innerColor.red(), innerColor.green(), innerColor.blue(), innerRightAlpha).endVertex();
-        buffer.vertex(matrix, outerRight.x(), outerRight.y(), outerRight.z()).color(outerColor.red(), outerColor.green(), outerColor.blue(), outerRightAlpha).endVertex();
+        buffer.addVertex(matrix, outerLeft.x(), outerLeft.y(), outerLeft.z()).setColor(outerColor.red(), outerColor.green(), outerColor.blue(), outerLeftAlpha);
+        buffer.addVertex(matrix, innerLeft.x(), innerLeft.y(), innerLeft.z()).setColor(innerColor.red(), innerColor.green(), innerColor.blue(), innerLeftAlpha);
+        buffer.addVertex(matrix, innerRight.x(), innerRight.y(), innerRight.z()).setColor(innerColor.red(), innerColor.green(), innerColor.blue(), innerRightAlpha);
+        buffer.addVertex(matrix, outerRight.x(), outerRight.y(), outerRight.z()).setColor(outerColor.red(), outerColor.green(), outerColor.blue(), outerRightAlpha);
     }
 }
