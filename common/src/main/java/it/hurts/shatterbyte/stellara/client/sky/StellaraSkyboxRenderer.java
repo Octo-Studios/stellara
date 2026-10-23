@@ -197,20 +197,11 @@ public final class StellaraSkyboxRenderer {
         return new SkyboxRenderContext(MC, MC.level, camera, poseStack, partialTick, renderTime, skyAngle, dayTime, visibility, nightFactor, weatherFactor, biome, biomeKey);
     }
 
-    private static boolean hasNormalSky() {
-        return hasSupportedSky();
-    }
-
     private static boolean hasSupportedSky() {
         if (MC.level == null)
             return false;
 
-        if (MC.level.dimension() == Level.END)
-            return MC.level.effects().skyType() == DimensionSpecialEffects.SkyType.END;
-
-        return MC.level != null
-                && MC.level.dimensionType().hasSkyLight()
-                && MC.level.effects().skyType() == DimensionSpecialEffects.SkyType.NORMAL;
+        return MC.level.effects().skyType() != DimensionSpecialEffects.SkyType.NONE;
     }
 
     private static float getSkyOcclusion(Camera camera) {
@@ -227,7 +218,7 @@ public final class StellaraSkyboxRenderer {
     }
 
     private static float getNightFactor(float partialTick) {
-        if (MC.level.dimension() == Level.END)
+        if (MC.level.effects().skyType() == DimensionSpecialEffects.SkyType.END)
             return 1F;
 
         return Mth.clamp(MC.level.getStarBrightness(partialTick) * 2F, 0F, 1F);
