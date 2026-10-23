@@ -6,15 +6,8 @@ architectury {
     common(rootProject.property("enabled_platforms").split(","))
 }
 
-loom {
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
-    }
-}
-
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
-    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 }
