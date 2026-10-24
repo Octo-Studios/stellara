@@ -15,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.FogType;
 
@@ -198,10 +197,7 @@ public final class StellaraSkyboxRenderer {
     }
 
     private static boolean hasSupportedSky() {
-        if (MC.level == null)
-            return false;
-
-        return MC.level.effects().skyType() != DimensionSpecialEffects.SkyType.NONE;
+        return MC.level != null;
     }
 
     private static float getSkyOcclusion(Camera camera) {
@@ -218,7 +214,7 @@ public final class StellaraSkyboxRenderer {
     }
 
     private static float getNightFactor(float partialTick) {
-        if (MC.level.effects().skyType() == DimensionSpecialEffects.SkyType.END)
+        if (MC.level.effects().skyType() != DimensionSpecialEffects.SkyType.NORMAL)
             return 1F;
 
         return Mth.clamp(MC.level.getStarBrightness(partialTick) * 2F, 0F, 1F);

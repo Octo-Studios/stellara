@@ -1,0 +1,74 @@
+{
+  "fade_speed": 0.06,
+  "weight": 1000,
+  "dimensions": [
+    "minecraft:the_nether"
+  ],
+  "layers": [
+    {
+      "type": "stellara:sky_tint",
+      "priority": -100,
+      "color": [0.72, 0.18, 0.08],
+      "opacity": 0.08
+    },
+    {
+      "type": "stellara:aurora",
+      "priority": 20,
+      "bands": 3,
+      "segments": 200,
+      "gradient_steps": 16,
+      "center_yaw": 3.14,
+      "sphere_radius": 2,
+      "width": 18,
+      "min_pitch": -0.4,
+      "max_pitch": 0.0,
+      "wave_amplitude": 0.06,
+      "wave_frequency": 4,
+      "depth_amplitude": 10,
+      "ray_strength": 0.5,
+      "edge_softness": 0.5,
+      "speed": 0.004,
+      "opacity": 0.45,
+      "colors": [
+        [0.9, 0.12, 0.04],
+        [1.0, 0.36, 0.08],
+        [0.6, 0.06, 0.02],
+        [1.0, 0.58, 0.12]
+      ]
+    },
+    {
+      "type": "stellara:star_field",
+      "priority": -5,
+      "textures": [
+        "stellara:textures/sky/desert/orange_star_1.png",
+        "stellara:textures/sky/desert/orange_star_2.png",
+        "stellara:textures/sky/desert/orange_star_3.png",
+        "stellara:textures/sky/desert/orange_star_4.png",
+        "stellara:textures/sky/desert/orange_star_5.png",
+        "stellara:textures/sky/desert/orange_star_6.png",
+        "stellara:textures/sky/desert/orange_star_7.png",
+        "stellara:textures/sky/desert/yellow_star_1.png",
+        "stellara:textures/sky/desert/yellow_star_2.png",
+        "stellara:textures/sky/desert/yellow_star_3.png",
+        "stellara:textures/sky/desert/yellow_star_4.png",
+        "stellara:textures/sky/desert/yellow_star_5.png",
+        "stellara:textures/sky/desert/yellow_star_6.png",
+        "stellara:textures/sky/desert/yellow_star_7.png"
+      ],
+      "count": 900,
+      "min_size": 0.45,
+      "max_size": 1.5,
+      "color": [1.0, 0.72, 0.48],
+      "seed": 666001
+    },
+    {
+      "type": "stellara:shooting_stars",
+      "priority": 24,
+      "count": 2,
+      "interval_ticks": 130,
+      "duration_ticks": 16,
+      "color": [1.0, 0.48, 0.18],
+      "seed": 666002
+    }
+  ]
+}
