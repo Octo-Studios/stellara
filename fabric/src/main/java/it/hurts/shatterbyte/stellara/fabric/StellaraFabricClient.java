@@ -7,6 +7,6 @@ import net.minecraft.server.packs.PackType;
 public class StellaraFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricSkyboxDataReloadListener());
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new FabricSkyboxDataReloadListener());
     }
 }
