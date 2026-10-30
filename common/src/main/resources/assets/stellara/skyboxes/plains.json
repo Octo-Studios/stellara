@@ -9,7 +9,10 @@
   "biomes": [
     "minecraft:plains",
     "minecraft:sunflower_plains",
-    "minecraft:meadow"
+    "minecraft:meadow",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_gravelly_hills",
+    "minecraft:stony_peaks"
   ],
   "yaw": 3.14,
   "base_pitch": -0.16,
